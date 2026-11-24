@@ -1,0 +1,17 @@
+# Documentos de trabalho dos agentes e do mantenedor (ver AGENTS.md)
+tmp/
+
+# Dependências e builds
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Segredos
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+.serena/

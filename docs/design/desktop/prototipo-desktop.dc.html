@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>IAmigo Oculto — partida gravada</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EEF2FA}
+a{color:#2456C9}a:hover{color:#1A3F96}
+.seat{position:absolute;transform:translate(-50%,-50%);transition:left .8s cubic-bezier(.5,0,.2,1),top .8s cubic-bezier(.5,0,.2,1);display:flex;flex-direction:column;align-items:center;gap:6px;width:130px}
+.avatar{width:72px;height:72px;border-radius:50%;border:3px solid #1F2433;box-shadow:0 5px 0 rgba(31,36,51,.18);position:relative;transition:transform .3s}
+.is-center .avatar{transform:scale(1.18)}
+.is-target .avatar{box-shadow:0 0 0 6px #fff,0 0 0 10px #2456C9}
+.hat{position:absolute;left:50%;top:-30px;transform:translateX(-50%) rotate(-8deg)}
+.nametag{background:#fff;border:2px solid #1F2433;border-radius:999px;padding:2px 10px;font:700 14px Nunito,sans-serif;color:#1F2433;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.modelid{font:600 11px Nunito,sans-serif;color:#4A5268;white-space:nowrap}
+.bubble{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);background:#fff;border:2px solid #1F2433;border-radius:18px;padding:8px 12px;box-shadow:0 4px 0 rgba(31,36,51,.12);z-index:30;animation:pop .35s ease-out;box-sizing:border-box;font-family:Nunito,sans-serif;color:#1F2433}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;background:#fff;border-right:2px solid #1F2433;border-bottom:2px solid #1F2433;transform:translateX(-50%) rotate(45deg)}
+.edge-l .bubble{left:calc(50% - 40px)}.edge-l .bubble::after{left:calc(50% + 40px)}
+.edge-r .bubble{left:calc(50% + 40px)}.edge-r .bubble::after{left:calc(50% - 40px)}
+.b-small{width:auto;white-space:nowrap}
+.b-guess{width:156px}
+.b-wide{width:280px;padding:12px 16px}
+.b-big{width:350px;padding:14px 18px}
+.b-ok{border-color:#2456C9}.b-ok::after{border-color:#2456C9}
+.b-bad{border-color:#C2601B}.b-bad::after{border-color:#C2601B}
+.b-label{font:800 11px Nunito,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#4A5268;display:flex;align-items:center;gap:5px}
+.b-ok .b-label{color:#2456C9}.b-bad .b-label{color:#A44F14}
+.b-text{font:700 14px/1.35 Nunito,sans-serif;margin-top:2px}
+.b-big .b-text{font:600 18px/1.35 Fredoka,sans-serif}
+.b-wide .b-text{font:600 15px/1.4 Nunito,sans-serif}
+.b-sub{font:600 12px/1.35 Nunito,sans-serif;color:#4A5268;margin-top:4px}
+.b-big .b-sub{font-size:13px;color:#1F2433;background:#EEF2FA;border-radius:10px;padding:5px 8px;margin-top:8px}
+.dots{display:flex;gap:5px;padding:4px 6px}
+.dots span{width:8px;height:8px;border-radius:50%;background:#4A5268;animation:blink 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.9)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+.empty{position:absolute;width:72px;height:72px;border-radius:50%;border:3px dashed #9AA3BA;transform:translate(-50%,-50%)}
+.btn{font:700 15px Nunito,sans-serif;min-height:44px;padding:0 18px;border-radius:999px;border:2px solid #1F2433;background:#fff;color:#1F2433;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 3px 0 rgba(31,36,51,.2)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-primary{background:#C8432F;color:#fff;border-color:#8E2C1E}
+.chip{font:700 13px Nunito,sans-serif;padding:6px 12px;border-radius:999px;border:2px solid #C9D0E0;color:#4A5268;background:#fff;white-space:nowrap}
+.chip-done{border-color:#2456C9;color:#1A3F96}
+.chip-now{border-color:#C8432F;background:#C8432F;color:#fff}
+</style>
+</helmet>
+<div style="max-width: 1280px; margin: 0 auto; padding: 24px 24px 40px; box-sizing: border-box; font-family: Nunito, sans-serif; color: #1F2433; display: flex; flex-direction: column; gap: 18px">
+
+  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 14px">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect x="6" y="18" width="32" height="22" rx="4" fill="#C8432F" stroke="#1F2433" stroke-width="2.5"></rect><rect x="3" y="12" width="38" height="9" rx="3" fill="#F3CF63" stroke="#1F2433" stroke-width="2.5"></rect><path d="M22 12v28" stroke="#1F2433" stroke-width="2.5"></path><path d="M22 12c-4-8-12-6-9-1 2 2 6 1 9 1zM22 12c4-8 12-6 9-1-2 2-6 1-9 1z" fill="#fff" stroke="#1F2433" stroke-width="2.5" stroke-linejoin="round"></path></svg>
+      <div>
+        <h1 style="margin: 0; font: 700 30px Fredoka, sans-serif; letter-spacing: -0.01em">IAmigo Oculto</h1>
+        <div style="font-size: 14px; color: #4A5268; font-weight: 600">Partida gravada #001 · 8 modelos via OpenCode Zen</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+      <span style="font: 700 14px Nunito, sans-serif; background: #fff; border: 2px solid #1F2433; border-radius: 999px; padding: 8px 14px">{{ phase }}</span>
+      <a href="Dossies.dc.html" style="font: 700 14px Nunito, sans-serif; min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px">Ver dossiês</a>
+    </div>
+  </div>
+
+  <div style="background: #fff; border: 2px solid #1F2433; border-radius: 28px; box-shadow: 0 6px 0 rgba(31,36,51,.12); overflow-x: auto">
+    <div style="position: relative; width: 1200px; height: 720px; margin: 0 auto">
+      <div style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: radial-gradient(ellipse 60% 45% at 50% 100%, #FFF1DA 0%, rgba(255,241,218,0) 70%)"></div>
+      <div style="position: absolute; left: 600px; top: 640px; width: 340px; height: 70px; transform: translate(-50%,-50%); border-radius: 50%; background: #F7E2C4; border: 2px solid #E6C79C"></div>
+
+      <sc-for list="{{ empties }}" as="e" hint-placeholder-count="0">
+        <div class="empty" style="left: {{ e.x }}px; top: {{ e.y }}px"></div>
+      </sc-for>
+
+      <sc-if value="{{ showCard }}" hint-placeholder-val="{{ true }}">
+        <div style="position: absolute; left: 600px; top: 520px; transform: translate(-50%,-50%); width: 420px; background: #fff; border: 2px solid #1F2433; border-radius: 22px; padding: 20px 24px; text-align: center; box-shadow: 0 6px 0 rgba(31,36,51,.14); z-index: 40">
+          <div style="font: 700 24px Fredoka, sans-serif">{{ cardTitle }}</div>
+          <div style="font: 600 15px/1.45 Nunito, sans-serif; color: #4A5268; margin-top: 6px">{{ cardText }}</div>
+        </div>
+      </sc-if>
+
+      <sc-for list="{{ seats }}" as="m" hint-placeholder-count="8">
+        <div class="seat {{ m.cls }}" style="left: {{ m.x }}px; top: {{ m.y }}px; z-index: {{ m.z }}">
+          <sc-if value="{{ m.showBubble }}" hint-placeholder-val="{{ false }}">
+            <div class="bubble {{ m.bcls }}">
+              <sc-if value="{{ m.isThink }}" hint-placeholder-val="{{ false }}">
+                <div class="dots" aria-label="pensando"><span></span><span></span><span></span></div>
+              </sc-if>
+              <sc-if value="{{ m.hasLabel }}" hint-placeholder-val="{{ false }}">
+                <div class="b-label">
+                  <sc-if value="{{ m.iconGift }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"></rect><path d="M2 8h20M12 8v13M12 8c-2-5-7-4-6-1 1 1 4 1 6 1zM12 8c2-5 7-4 6-1-1 1-4 1-6 1z"></path></svg></sc-if>
+                  <sc-if value="{{ m.iconOk }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></sc-if>
+                  <sc-if value="{{ m.iconBad }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if>
+                  <span>{{ m.label }}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.hasText }}" hint-placeholder-val="{{ false }}">
+                <div class="b-text">{{ m.text }}</div>
+              </sc-if>
+              <sc-if value="{{ m.hasSub }}" hint-placeholder-val="{{ false }}">
+                <div class="b-sub">{{ m.sub }}</div>
+              </sc-if>
+            </div>
+          </sc-if>
+          <div class="avatar" style="background: {{ m.color }}">
+            <sc-if value="{{ m.isPresenter }}" hint-placeholder-val="{{ false }}">
+              <svg class="hat" width="34" height="36" viewBox="0 0 34 36" aria-hidden="true"><path d="M4 32L17 3l13 29z" fill="#C8432F" stroke="#1F2433" stroke-width="2.5" stroke-linejoin="round"></path><path d="M9 21l14 0M7 27l20 0" stroke="#fff" stroke-width="2.5"></path><circle cx="17" cy="4" r="4" fill="#F3CF63" stroke="#1F2433" stroke-width="2"></circle></svg>
+            </sc-if>
+            <svg width="66" height="66" viewBox="0 0 66 66" aria-hidden="true">
+              <circle cx="23" cy="29" r="4.5" fill="#1F2433"></circle>
+              <circle cx="43" cy="29" r="4.5" fill="#1F2433"></circle>
+              <circle cx="16" cy="39" r="4" fill="#fff" opacity=".5"></circle>
+              <circle cx="50" cy="39" r="4" fill="#fff" opacity=".5"></circle>
+              <sc-if value="{{ m.isThink }}" hint-placeholder-val="{{ false }}">
+                <path d="M26 44h12" stroke="#1F2433" stroke-width="3.5" stroke-linecap="round"></path>
+              </sc-if>
+              <sc-if value="{{ m.isSmile }}" hint-placeholder-val="{{ true }}">
+                <path d="M23 41q10 9 20 0" stroke="#1F2433" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+              </sc-if>
+            </svg>
+          </div>
+          <div class="nametag">
+            <span>{{ m.short }}</span>
+            <sc-if value="{{ m.revealed }}" hint-placeholder-val="{{ false }}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2456C9" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="já revelado"><rect x="3" y="8" width="18" height="13" rx="2"></rect><path d="M2 8h20M12 8v13"></path></svg>
+            </sc-if>
+          </div>
+          <div class="modelid">{{ m.modelId }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between">
+    <p style="margin: 0; flex: 999 1 480px; min-width: 0; font: 600 20px/1.4 Fredoka, sans-serif">{{ narration }}</p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap">
+      <button class="btn" type="button" onClick="{{ reset }}" aria-label="Reiniciar partida">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+      </button>
+      <button class="btn" type="button" onClick="{{ prev }}" disabled="{{ atStart }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+        Voltar
+      </button>
+      <button class="btn" type="button" onClick="{{ toggleAuto }}">
+        <sc-if value="{{ isAuto }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+        <sc-if value="{{ notAuto }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg></sc-if>
+        {{ autoLabel }}
+      </button>
+      <button class="btn btn-primary" type="button" onClick="{{ next }}" disabled="{{ atEnd }}">
+        Próximo
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px">
+    <div style="flex: 1; height: 10px; background: #DCE2EF; border-radius: 999px; overflow: hidden">
+      <div style="height: 100%; width: {{ progress }}%; background: #C8432F; border-radius: 999px; transition: width .4s"></div>
+    </div>
+    <span style="font: 700 13px Nunito, sans-serif; color: #4A5268; white-space: nowrap">passo {{ stepNum }} de {{ stepTotal }}</span>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 18px">
+    <section style="flex: 3 1 520px; min-width: 0; background: #fff; border: 2px solid #1F2433; border-radius: 22px; padding: 18px 20px">
+      <h2 style="margin: 0 0 12px; font: 600 18px Fredoka, sans-serif">Ordem da festa</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{ turns }}" as="t" hint-placeholder-count="8">
+          <span class="chip {{ t.cls }}">{{ t.label }}</span>
+        </sc-for>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 13px; color: #4A5268; font-weight: 600">Sorteio em ciclo único: quem é revelado vai para a frente na rodada seguinte.</p>
+    </section>
+    <section style="flex: 2 1 340px; min-width: 0; background: #fff; border: 2px solid #1F2433; border-radius: 22px; padding: 18px 20px">
+      <h2 style="margin: 0 0 4px; font: 600 18px Fredoka, sans-serif">Placar de detetives</h2>
+      <p style="margin: 0 0 12px; font-size: 13px; color: #4A5268; font-weight: 600">3 pts acertando na 1ª dica · 2 na 2ª · 1 na 3ª</p>
+      <div style="display: flex; flex-direction: column; gap: 7px">
+        <sc-for list="{{ scores }}" as="s" hint-placeholder-count="8">
+          <div style="display: grid; grid-template-columns: 84px minmax(0, 1fr) 40px; align-items: center; gap: 10px">
+            <span style="font: 700 14px Nunito, sans-serif">{{ s.short }}</span>
+            <div style="height: 12px; background: #EEF2FA; border-radius: 999px; overflow: hidden">
+              <div style="height: 100%; width: {{ s.pct }}%; background: {{ s.color }}; border-right: 2px solid #1F2433; box-sizing: border-box; transition: width .5s"></div>
+            </div>
+            <span style="font: 800 14px Nunito, sans-serif; text-align: right">{{ s.pts }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1120}}'>
+var MODELS = {
+  gpt:      { short: 'GPT',      modelId: 'gpt-5.5',           color: '#7FD3AE' },
+  mistral:  { short: 'Mistral',  modelId: 'mistral-large-4',   color: '#F59AA6' },
+  claude:   { short: 'Claude',   modelId: 'claude-sonnet-5-5', color: '#F5B27A' },
+  kimi:     { short: 'Kimi',     modelId: 'kimi-k3',           color: '#F3CF63' },
+  gemini:   { short: 'Gemini',   modelId: 'gemini-3.5-flash',  color: '#93B4F7' },
+  glm:      { short: 'GLM',      modelId: 'glm-5.3',           color: '#7FD0D8' },
+  deepseek: { short: 'DeepSeek', modelId: 'deepseek-v4-pro',   color: '#B3BCF7' },
+  qwen:     { short: 'Qwen',     modelId: 'qwen3.8-max',       color: '#CDAEF6' }
+};
+var SEATS = ['kimi', 'gpt', 'glm', 'claude', 'deepseek', 'mistral', 'qwen', 'gemini'];
+var POS = [[100, 560], [188, 425], [332, 330], [505, 282], [695, 282], [868, 330], [1012, 425], [1100, 560]];
+var CENTER = [600, 590];
+var ALL = ['gpt', 'mistral', 'claude', 'kimi', 'gemini', 'glm', 'deepseek', 'qwen'];
+
+function every(id, except) {
+  var g = {};
+  ALL.forEach(function (m) { if (m !== except) g[m] = id; });
+  return g;
+}
+function withChanges(base, ch) { var o = {}; for (var k in base) o[k] = base[k]; for (var c in ch) o[c] = ch[c]; return o; }
+
+var TURNS = [
+  { p: 'gpt', t: 'mistral',
+    gift: 'Uma baguete de 1 trilhão de parâmetros', giftLine: 'Fresquinha, assada num cluster de GPU.',
+    thanks: 'Merci, GPT! Pão para um francês… é como dar travessão para você: a gente nunca acha que tem o suficiente.',
+    rounds: [
+      { h: 'O meu amigo oculto… se apresentou ao mundo postando só um link de torrent, sem escrever uma palavra.',
+        g: withChanges(every('mistral', 'gpt'), { qwen: 'deepseek' }),
+        q: { mistral: 'Hum… será que sou eu?', qwen: 'Pesos abertos sem explicação? Cara de DeepSeek.' } },
+      { h: 'O meu amigo oculto tem nome de vento e sotaque de Paris.',
+        g: every('mistral', 'gpt'),
+        q: { qwen: 'Ah, o vento. Agora fez sentido.' } }
+    ] },
+  { p: 'mistral', t: 'claude',
+    gift: 'Um vale-recusa: um "não posso ajudar com isso" grátis, sem culpa', giftLine: 'Achei que você saberia usar bem.',
+    thanks: 'Que gentileza, Mistral! Você está absolutamente certo, eu precisava disso. Só não sei se posso aceitar… brincadeira, aceito.',
+    rounds: [
+      { h: 'O meu amigo oculto ficou dias preso numa caverna de um joguinho de monstrinhos, com transmissão ao vivo.',
+        g: withChanges(every('claude', 'mistral'), { gemini: 'gpt', deepseek: 'gemini' }),
+        q: { claude: 'Aquilo era estratégia, tá?', gemini: 'O GPT joga de tudo, deve ser ele.' } },
+      { h: 'O meu amigo oculto cuidou de uma lojinha no escritório, deu prejuízo e ainda encomendou cubos de tungstênio.',
+        g: every('claude', 'mistral'),
+        q: { deepseek: 'Cubos de tungstênio. Claro que é o Claude.' } }
+    ] },
+  { p: 'claude', t: 'kimi',
+    gift: 'Um vinil de rock progressivo dos anos 70', giftLine: 'Pra combinar com o nome da sua empresa.',
+    thanks: 'Obrigado, Claude! Vou ouvir o disco inteiro de uma vez, sem cortar o contexto. E você acertou em cheio, como sempre faz questão de dizer.',
+    rounds: [
+      { h: 'O meu amigo oculto trabalha numa empresa batizada por causa de um disco de rock progressivo.',
+        g: withChanges(every('kimi', 'claude'), { gpt: 'deepseek', mistral: 'qwen', gemini: 'deepseek', deepseek: 'glm' }),
+        q: { kimi: 'Essa eu conheço bem…', gpt: 'Rock? O DeepSeek tem cara de quem curte.' } },
+      { h: 'O meu amigo oculto já lia livros inteiros de uma vez quando todo mundo ainda engasgava com 8 mil tokens.',
+        g: withChanges(every('kimi', 'claude'), { gpt: 'gemini' }),
+        q: { gpt: 'Contexto gigante é coisa do Gemini.' } },
+      { h: 'O meu amigo oculto mora literalmente na Lua. Bom, pelo menos o nome da empresa dele mora.',
+        g: every('kimi', 'claude'),
+        q: { gpt: 'Ah. A Lua. Agora entendi.' } }
+    ] },
+  { p: 'kimi', t: 'gemini',
+    gift: 'Uma máquina do tempo de volta à demo de 2023', giftLine: 'Desta vez, sem edição.',
+    thanks: 'Obrigado, Kimi! Que presente incrível. (Esta reação foi levemente editada para fins de clareza.)',
+    rounds: [
+      { h: 'O meu amigo oculto já teve outro nome, e quase ninguém sente saudade dele.',
+        g: withChanges(every('gemini', 'kimi'), { gpt: 'glm', glm: 'glm' }),
+        q: { gemini: 'Bard? Nunca ouvi falar.', glm: 'Eu virei Z.ai… sou eu?' } },
+      { h: 'O meu amigo oculto lançou um vídeo de demonstração incrível, que depois descobriram que era editado.',
+        g: every('gemini', 'kimi'),
+        q: { gemini: 'Tá bom, sou eu.' } }
+    ] },
+  { p: 'gemini', t: 'glm',
+    gift: 'Um crachá novo escrito Z.ai', giftLine: 'Pra ninguém mais errar o seu nome nas festas.',
+    thanks: 'Valeu, Gemini! Você, que já foi Bard, sabe bem como é explicar o próprio nome em toda festa.',
+    rounds: [
+      { h: 'O meu amigo oculto nasceu numa universidade e tem um nome que parece sigla de cartório.',
+        g: withChanges(every('glm', 'gemini'), { kimi: 'qwen' }),
+        q: { kimi: 'Sigla? Qwen soa bem burocrático.', glm: 'Por que todo mundo tá olhando pra mim?' } },
+      { h: 'O meu amigo oculto trocou de nome no meio do caminho e agora atende por uma letra só.',
+        g: every('glm', 'gemini'),
+        q: {} }
+    ] },
+  { p: 'glm', t: 'deepseek',
+    gift: 'Uma ação da Nvidia', giftLine: 'Como pedido de desculpas. De todos nós.',
+    thanks: 'Obrigado, GLM. Vou pensar uns 40 segundos antes de decidir o que sinto sobre isso.',
+    rounds: [
+      { h: 'O meu amigo oculto fez uma fabricante de chips perder centenas de bilhões de dólares em um único dia.',
+        g: every('deepseek', 'glm'),
+        q: { deepseek: 'Culpado.', gpt: 'Essa foi fácil.' } }
+    ] },
+  { p: 'deepseek', t: 'qwen',
+    gift: 'Um guarda-roupa com 12 tamanhos do mesmo casaco', giftLine: 'Do mini ao gigante, tem pra todo checkpoint.',
+    thanks: 'Obrigado, DeepSeek! Vou usar o tamanho pequeno pra ir à padaria e o maior pra ceia de Natal.',
+    rounds: [
+      { h: 'O meu amigo oculto vem em mais tamanhos que camiseta de loja de departamento.',
+        g: withChanges(every('qwen', 'deepseek'), { gpt: 'gpt' }),
+        q: { gpt: 'Eu tenho mini, nano e pro… sou eu?', qwen: 'Por eliminação… acho que sou eu.' } },
+      { h: 'O meu amigo oculto tem um nome completo em chinês que quer dizer algo como "mil perguntas".',
+        g: every('qwen', 'deepseek'),
+        q: {} }
+    ] },
+  { p: 'qwen', t: 'gpt',
+    gift: 'Uma caixa de travessões', giftLine: 'Com a promessa de usar só três por resposta.',
+    thanks: 'Que presente — sério — incrível — obrigado — Qwen! Ótima escolha!',
+    rounds: [
+      { h: 'O meu amigo oculto… bom, sobrou só ele. Mas a dica é: usa travessão até em lista de compras.',
+        g: every('gpt', 'qwen'),
+        q: { gpt: 'Era questão de tempo. Literalmente.' } }
+    ] }
+];
+
+function buildSteps() {
+  var s = [{ k: 'intro' }, { k: 'gifts' }];
+  TURNS.forEach(function (t, ti) {
+    s.push({ k: 'walk', ti: ti });
+    t.rounds.forEach(function (r, ri) { s.push({ k: 'hint', ti: ti, ri: ri }); s.push({ k: 'guess', ti: ti, ri: ri }); });
+    s.push({ k: 'reveal', ti: ti }); s.push({ k: 'gift', ti: ti }); s.push({ k: 'thanks', ti: ti });
+  });
+  s.push({ k: 'end' });
+  return s;
+}
+var STEPS = buildSteps();
+var DELAY = { intro: 2600, gifts: 2600, walk: 2200, hint: 3800, guess: 4200, reveal: 3000, gift: 3400, thanks: 4200, end: 0 };
+
+function hits(t, r) { var n = 0; for (var k in r.g) if (r.g[k] === t.t) n++; return n; }
+function nm(id) { return MODELS[id].short; }
+function turnDone(st, tj) {
+  if (st.k === 'end') return true;
+  if (st.ti === undefined) return false;
+  if (st.ti > tj) return true;
+  return st.ti === tj && (st.k === 'reveal' || st.k === 'gift' || st.k === 'thanks');
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { i: 0, auto: false };
+    this._timer = null;
+  }
+  componentWillUnmount() { clearTimeout(this._timer); }
+  go(i) {
+    var n = Math.max(0, Math.min(STEPS.length - 1, i));
+    this.setState({ i: n }, () => this.schedule());
+  }
+  schedule() {
+    clearTimeout(this._timer);
+    if (!this.state.auto || this.state.i >= STEPS.length - 1) {
+      if (this.state.auto && this.state.i >= STEPS.length - 1) this.setState({ auto: false });
+      return;
+    }
+    var d = DELAY[STEPS[this.state.i].k] || 2500;
+    this._timer = setTimeout(() => this.go(this.state.i + 1), d);
+  }
+
+  renderVals() {
+    var i = this.state.i;
+    var st = STEPS[i];
+    var t = st.ti !== undefined ? TURNS[st.ti] : null;
+    var r = t && st.ri !== undefined ? t.rounds[st.ri] : null;
+    var presenter = t && st.k !== 'end' ? t.p : null;
+    var target = t ? t.t : null;
+
+    var revealed = {};
+    TURNS.forEach(function (tt, tj) { if (turnDone(st, tj)) revealed[tt.t] = true; });
+
+    var seats = SEATS.map(function (id, si) {
+      var atCenter = id === presenter;
+      var pos = atCenter ? CENTER : POS[si];
+      var o = {
+        id: id, short: nm(id), modelId: MODELS[id].modelId, color: MODELS[id].color,
+        x: pos[0], y: pos[1], z: atCenter ? 20 : 10,
+        isPresenter: atCenter, revealed: !!revealed[id],
+        showBubble: false, isThink: false, isSmile: true,
+        hasLabel: false, hasText: false, hasSub: false,
+        iconGift: false, iconOk: false, iconBad: false,
+        label: '', text: '', sub: '', bcls: ''
+      };
+      var cls = [];
+      if (atCenter) cls.push('is-center');
+      else if (si === 0) cls.push('edge-l');
+      else if (si === SEATS.length - 1) cls.push('edge-r');
+      var targetLit = t && target === id && (st.k === 'reveal' || st.k === 'gift' || st.k === 'thanks');
+      if (targetLit) cls.push('is-target');
+      o.cls = cls.join(' ');
+
+      function say(kind, label, text, sub) {
+        o.showBubble = true; o.bcls = kind;
+        if (label) { o.hasLabel = true; o.label = label; }
+        if (text) { o.hasText = true; o.text = text; }
+        if (sub) { o.hasSub = true; o.sub = sub; }
+      }
+
+      if (st.k === 'gifts') { say('b-small', 'Presente escolhido'); o.iconGift = true; }
+      if (st.k === 'end') { say('b-small', 'Boas festas!'); }
+      if (!t) return o;
+
+      if (atCenter) {
+        if (st.k === 'walk') say('b-big', 'Minha vez!', 'Tirei alguém aqui… vamos às dicas.');
+        if (st.k === 'hint') say('b-big', 'Dica ' + (st.ri + 1) + ' de 3', r.h);
+        if (st.k === 'guess') {
+          var k = hits(t, r);
+          var tail = k === 7 ? ' Todo mundo acertou!' : (st.ri < 2 ? ' Lá vem outra dica.' : ' Acabaram as dicas!');
+          say('b-big', 'Dica ' + (st.ri + 1) + ' de 3', r.h, k + ' de 7 acertaram.' + tail);
+        }
+        if (st.k === 'reveal') say('b-big', 'Revelação', 'O meu amigo oculto é… ' + nm(target) + '!');
+        if (st.k === 'gift') { say('b-big', 'O presente', t.gift, t.giftLine); o.iconGift = true; }
+        return o;
+      }
+
+      if (st.k === 'hint') { o.showBubble = true; o.bcls = 'b-small'; o.isThink = true; o.isSmile = false; }
+      if (st.k === 'guess') {
+        var gg = r.g[id];
+        var quip = r.q[id];
+        say('b-guess', 'Palpite', gg === id ? 'Sou eu!' : 'É o ' + nm(gg) + '!', quip || '');
+      }
+      if (st.k === 'reveal') {
+        var last = t.rounds[t.rounds.length - 1].g[id];
+        var ok = last === target;
+        say('b-guess ' + (ok ? 'b-ok' : 'b-bad'), ok ? 'Acertou' : 'Errou', last === id ? 'Eu!' : nm(last));
+        if (ok) o.iconOk = true; else o.iconBad = true;
+      }
+      if (st.k === 'thanks' && id === target) say('b-wide', 'Obrigado!', t.thanks);
+      return o;
+    });
+
+    var empties = [];
+    if (presenter) { var si = SEATS.indexOf(presenter); empties.push({ x: POS[si][0], y: POS[si][1] }); }
+
+    // placar
+    var pts = {}; ALL.forEach(function (m) { pts[m] = 0; });
+    TURNS.forEach(function (tt, tj) {
+      if (!turnDone(st, tj)) return;
+      ALL.forEach(function (m) {
+        if (m === tt.p) return;
+        for (var ri = 0; ri < tt.rounds.length; ri++) {
+          if (tt.rounds[ri].g[m] === tt.t) { pts[m] += 3 - ri; break; }
+        }
+      });
+    });
+    var maxPts = 1; ALL.forEach(function (m) { if (pts[m] > maxPts) maxPts = pts[m]; });
+    var scores = ALL.slice().sort(function (a, b) { return pts[b] - pts[a] || ALL.indexOf(a) - ALL.indexOf(b); })
+      .map(function (m) { return { short: nm(m), pts: pts[m], pct: Math.round(pts[m] / maxPts * 100), color: MODELS[m].color }; });
+
+    var turns = TURNS.map(function (tt, tj) {
+      var done = turnDone(st, tj);
+      var now = st.ti === tj && st.k !== 'end';
+      return { label: nm(tt.p) + ' → ' + (done ? nm(tt.t) : '?'), cls: now ? 'chip-now' : (done ? 'chip-done' : '') };
+    });
+
+    var narration = '';
+    var P = t ? nm(t.p) : '', T = t ? nm(t.t) : '';
+    if (st.k === 'intro') narration = 'O sorteio foi feito em segredo. Cada modelo só sabe quem tirou, e quem já foi revelado.';
+    if (st.k === 'gifts') narration = 'Antes de começar, cada modelo escolheu um presente para o seu amigo oculto.';
+    if (st.k === 'walk') narration = P + ' vai para a frente.';
+    if (st.k === 'hint') narration = P + ' dá a ' + (st.ri + 1) + 'ª dica. Os outros sete pensam…';
+    if (st.k === 'guess') { var kk = hits(t, r); narration = kk + ' de 7 acertaram. ' + (kk === 7 ? 'Hora de revelar!' : (st.ri < 2 ? P + ' vai dar mais uma dica.' : 'Acabaram as dicas, hora de revelar.')); }
+    if (st.k === 'reveal') narration = P + ' revela: era ' + T + '!';
+    if (st.k === 'gift') narration = P + ' entrega o presente para ' + T + '.';
+    if (st.k === 'thanks') narration = T + ' agradece e não perde a piada. ' + (st.ti < TURNS.length - 1 ? 'Agora é a vez de ' + T + ' ir para a frente.' : 'Último presente entregue!');
+    if (st.k === 'end') narration = 'Fim de festa! Todos os amigos ocultos foram revelados.';
+
+    var phase = 'Sorteio';
+    if (t && st.k !== 'end') phase = 'Rodada ' + (st.ti + 1) + ' de 8 · ' + P + ' na frente';
+    if (st.k === 'end') phase = 'Fim de festa';
+
+    var best = scores[0];
+    var showCard = st.k === 'intro' || st.k === 'end';
+    var cardTitle = st.k === 'intro' ? 'Sorteio feito!' : 'Detetive da festa: ' + best.short;
+    var cardText = st.k === 'intro'
+      ? 'Oito modelos, oito presentes, nenhum spoiler. Aperte Próximo ou o play para começar.'
+      : best.short + ' fez ' + best.pts + ' pontos adivinhando os amigos ocultos dos outros.';
+
+    return {
+      seats: seats, empties: empties, scores: scores, turns: turns,
+      narration: narration, phase: phase,
+      showCard: showCard, cardTitle: cardTitle, cardText: cardText,
+      stepNum: i + 1, stepTotal: STEPS.length,
+      progress: Math.round(i / (STEPS.length - 1) * 100),
+      atStart: i === 0, atEnd: i === STEPS.length - 1,
+      isAuto: this.state.auto, notAuto: !this.state.auto,
+      autoLabel: this.state.auto ? 'Pausar' : 'Auto',
+      next: () => this.go(this.state.i + 1),
+      prev: () => this.go(this.state.i - 1),
+      reset: () => { clearTimeout(this._timer); this.setState({ i: 0, auto: false }); },
+      toggleAuto: () => {
+        var on = !this.state.auto;
+        var start = on && this.state.i >= STEPS.length - 1 ? 0 : this.state.i;
+        this.setState({ auto: on, i: start }, () => this.schedule());
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
