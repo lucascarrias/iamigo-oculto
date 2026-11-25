@@ -4,5 +4,11 @@
   "packageManager": "pnpm@12.23.0",
   "engines": {
     "node": ">=24 <25"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json && pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
   }
 }
