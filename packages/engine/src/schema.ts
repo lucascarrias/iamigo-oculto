@@ -81,8 +81,8 @@ export const roundScoredSchema = z.strictObject({
   type: z.literal("round_scored"),
   turn,
   round: roundSchema,
-  hits: z.number(),
-  total: z.number(),
+  hits: z.number().int().nonnegative(),
+  total: z.number().int().nonnegative(),
 });
 export const friendRevealedSchema = z.strictObject({
   ...common,
@@ -110,7 +110,7 @@ export const thanksGivenSchema = z.strictObject({
 export const matchFinishedSchema = z.strictObject({
   ...common,
   type: z.literal("match_finished"),
-  scores: z.record(participantIdSchema, z.number()),
+  scores: z.record(participantIdSchema, z.number().int().nonnegative()),
 });
 export const matchEventSchema = z.discriminatedUnion("type", [
   matchStartedSchema,
