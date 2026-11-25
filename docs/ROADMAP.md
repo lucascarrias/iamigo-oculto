@@ -132,7 +132,7 @@ Sem I/O, determinística, só APIs web padrão.
 
 | # | Decisão | Proposta | Bloqueia |
 |---|---|---|---|
-| D1 | Validação de schema em tempo de execução | Zod (gera tipos e JSON Schema para a saída estruturada dos LLMs) | M1-01 |
+| D1 | Validação de schema em tempo de execução | **Decidido:** Zod 4 (gera tipos e JSON Schema para a saída estruturada dos LLMs) | M1-01 |
 | D2 | SDK de LLM | Vercel AI SDK (já tem pacotes por família, que é como o Zen funciona) | M3-02 |
 | D3 | Hospedagem da demo | Cloudflare Pages ou GitHub Pages (grátis, estático) | M5-10 |
 | D4 | Domínio | — | M6-02 |
