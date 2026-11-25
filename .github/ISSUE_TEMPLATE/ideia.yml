@@ -1,0 +1,20 @@
+name: Sugerir uma ideia
+description: Proponha uma melhoria ou funcionalidade.
+title: "[Ideia] "
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Que necessidade ou problema sua ideia aborda?
+    validations:
+      required: true
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Qual é a sua proposta?
+    validations:
+      required: true
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto adicional

@@ -1,0 +1,24 @@
+name: Sugerir fato para dossiê
+description: Compartilhe um fato sobre um modelo com sua fonte.
+title: "[Dossiê] "
+body:
+  - type: input
+    id: modelo
+    attributes:
+      label: Modelo
+    validations:
+      required: true
+  - type: textarea
+    id: fato
+    attributes:
+      label: Fato
+      description: Provoque o modelo, nunca pessoas. Não inclua política ou fatos sobre fundadores ou funcionários além do nome.
+    validations:
+      required: true
+  - type: input
+    id: fonte
+    attributes:
+      label: Fonte
+      description: Informe o endereço da fonte que sustenta o fato.
+    validations:
+      required: true

@@ -1,0 +1,27 @@
+name: Relatar um problema
+description: Conte o que aconteceu e como reproduzir o problema.
+title: "[Problema] "
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: O que aconteceu?
+    validations:
+      required: true
+  - type: textarea
+    id: reproducao
+    attributes:
+      label: Como reproduzir?
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que você esperava?
+    validations:
+      required: true
+  - type: input
+    id: ambiente
+    attributes:
+      label: Ambiente
+      description: Informe versões relevantes e sistema operacional.
