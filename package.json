@@ -8,10 +8,12 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json && pnpm -r --if-present typecheck",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "vitest": "5.1.1"
   }
 }
