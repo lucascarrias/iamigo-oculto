@@ -1,6 +1,6 @@
 # IAmigo Oculto — Especificação
 
-> Status: **rascunho v0.3** (POC) · Idioma do projeto: português brasileiro · Licença: MIT
+> Status: **rascunho v0.4** (POC) · Idioma do projeto: português brasileiro · Licença: MIT
 >
 > Este documento é o contrato do projeto. Mudanças de regra, de schema de eventos ou de
 > interface passam por PR neste arquivo antes de virar código. Decisões técnicas com
@@ -154,6 +154,23 @@ Google ou `/chat/completions`) com base na lista de `https://opencode.ai/zen/v1/
 ## 7. Schema de eventos
 
 Toda partida é `Match { id, schemaVersion, seed, createdAt, participants, events[] }`.
+
+```ts
+type Participant = {
+  id: ParticipantId; name: string; dossier: string; model: string; provider: string
+  color?: string; avatar?: string
+}
+```
+
+`dossier` é o id do dossiê. A ordem de `participants` é a ordem dos assentos;
+`color` e `avatar` são copiados do dossiê na geração, quando disponíveis.
+
+- `seed` é uma string; `id` é escolhido por quem gera a partida e segue `^[a-z0-9][a-z0-9-]*$`.
+- `createdAt` e `at` são strings ISO-8601 UTC de um relógio injetado; `at` registra o
+  momento da geração, não o da reprodução.
+- `seq` contém inteiros contíguos a partir de 1.
+- IDs de participante, nomes, textos e campos do presente não podem ser vazios; `events` tem ao menos um evento.
+
 Cada evento tem `seq`, `at` e, quando vier de um LLM, `meta`.
 
 ```ts
