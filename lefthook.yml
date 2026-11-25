@@ -1,0 +1,10 @@
+pre-commit:
+  jobs:
+    - run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+pre-push:
+  jobs:
+    - run: pnpm typecheck
+commit-msg:
+  jobs:
+    - run: pnpm exec commitlint --edit {1}
