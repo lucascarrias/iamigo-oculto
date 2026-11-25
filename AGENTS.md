@@ -100,7 +100,8 @@ Antes de dar um item como pronto: lint, typecheck e testes passando.
 
 - **Conventional Commits**, com tipo e escopo em inglês e descrição em português:
   `feat(engine): sorteio em ciclo único`.
-- Escopos: `engine`, `providers`, `players`, `dossiers`, `cli`, `web`, `docs`, `ci`.
+- Tipos: os convencionais (`feat`, `fix`, `docs`, `chore`…) mais `content` (dossiês, prompts, falas).
+- Escopos (opcionais): `engine`, `providers`, `players`, `dossiers`, `cli`, `web`, `docs`, `ci`, `deps`.
 - **Nunca use `--no-verify`** nem desative hooks do lefthook. Se um hook falha, corrija a causa.
 
 ## Conteúdo (dossiês, prompts, falas de emergência)
