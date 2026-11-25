@@ -64,9 +64,9 @@ Sem I/O, determinística, só APIs web padrão.
 | M1-01 | `feat(engine): tipos e schema de eventos` | M | M0 | tipos do SPEC §7 + validação em tempo de execução do `Match` (ver decisão D1); `schemaVersion: 1` |
 | M1-02 | `feat(engine): RNG com semente` | P | M1-01 | mesma semente gera a mesma sequência; testes |
 | M1-03 | `feat(engine): sorteio em ciclo único` | P | M1-02 | ciclo único para 3–12 participantes; primeiro apresentador pela semente; erro fora do limite |
-| M1-04 | `feat(engine): PlayerView` | M | M1-01 | uma função por ação monta exatamente o que o SPEC §5 permite; testes garantem que nada a mais vaza |
-| M1-05 | `feat(engine): máquina de estados do turno` | G | M1-03, M1-04 | dicas até 3, fim por 100%, revelação, presente, agradecimento, passagem para o próximo; emite eventos na ordem |
-| M1-06 | `feat(engine): pontuação e validação de palpites` | P | M1-05 | 3/2/1 por primeiro acerto; candidatos válidos (SPEC §4.5) |
+| M1-04 | `feat(engine): PlayerView` | M | M1-01, M1-06 | uma função por ação monta exatamente o que o SPEC §5 permite; testes garantem que nada a mais vaza |
+| M1-05 | `feat(engine): máquina de estados do turno` | G | M1-03, M1-04, M1-06 | dicas até 3, fim por 100%, revelação, presente, agradecimento, passagem para o próximo; emite eventos na ordem |
+| M1-06 | `feat(engine): pontuação e validação de palpites` | P | M1-01 | 3/2/1 por primeiro acerto; candidatos válidos (SPEC §4.5) |
 | M1-07 | `feat(engine): interface Player + ScriptedPlayer` | M | M1-05 | partida completa só com respostas roteirizadas; testes de fim antecipado, 3 rodadas, palpite em si mesmo |
 | M1-08 | `test(engine): fixture da partida do protótipo` | M | M1-07 | a partida roteirizada do protótipo vira `fixtures/matches/prototipo.json`, gerada pelo ScriptedPlayer |
 
