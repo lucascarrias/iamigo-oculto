@@ -219,6 +219,13 @@ com backoff → **fala de emergência**: uma frase engraçada sorteada de um ban
 (ex.: "O meu amigo oculto… travei. Alguém reinicia meu contexto?"). O evento sai com
 `meta.fallback = true`. Palpite de emergência = candidato sorteado com a semente.
 
+A validação, as novas tentativas e o banco de falas de emergência ficam no pacote `players`.
+A engine é a última proteção para palpites: um alvo fora dos candidatos é substituído por um
+candidato sorteado com a semente da partida, e o evento recebe `meta.fallback = true`, mantendo
+os demais campos de `meta` do jogador. Texto inválido (vazio, sem o prefixo exigido, acima do
+limite ou da rodada errada) que chegar à engine viola o contrato do Player e gera erro. A
+verificação de vazamento de apelidos fica em `players`, pois depende do dossiê.
+
 ## 9. Dossiês e conteúdo
 
 - Um arquivo por modelo em `packages/dossiers/<id>.yaml`, validado por schema no CI:
