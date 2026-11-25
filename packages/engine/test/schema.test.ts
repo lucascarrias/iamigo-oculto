@@ -74,65 +74,173 @@ describe("schema de partida", () => {
       (m: ReturnType<typeof validMatch>) => {
         required(m.events[0]).type = "desconhecido";
       },
+      "events.0.type",
     ],
     [
       "rodada inválida",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(m.events[5]), { round: 4 });
       },
+      "events.5.round",
     ],
     [
       "seq ausente",
       (m: ReturnType<typeof validMatch>) => {
         Reflect.deleteProperty(required(m.events[0]), "seq");
       },
+      "events.0.seq",
     ],
     [
       "lacuna na sequência",
       (m: ReturnType<typeof validMatch>) => {
         required(m.events[2]).seq = 4;
       },
+      "events.2.seq",
     ],
     [
       "versão inválida",
       (m: ReturnType<typeof validMatch>) => {
         m.schemaVersion = 2;
       },
+      "schemaVersion",
     ],
     [
       "tentativas inválidas",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(required(m.events[2]).meta), { attempts: 5 });
       },
+      "events.2.meta.attempts",
     ],
     [
       "meta em evento não LLM",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(m.events[3]), { meta: required(m.events[2]).meta });
       },
+      "events.3",
     ],
     [
       "chave extra",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(m.events[0]), { extra: true });
       },
+      "events.0",
     ],
     [
       "participante desconhecido",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(m.events[5]), { target: "x" });
       },
+      "events.5.target",
     ],
     [
       "pontuação de desconhecido",
       (m: ReturnType<typeof validMatch>) => {
         Object.assign(required(required(m.events[10]).scores), { x: 1 });
       },
+      "events.10.scores.x",
     ],
-  ])("rejeita %s", (_name, mutate) => {
+  ])("rejeita %s", (_name, mutate, path) => {
     const match = validMatch();
     mutate(match);
     expect(() => parseMatch(match)).toThrow(MatchValidationError);
+    expect(() => parseMatch(match)).toThrow(path);
+  });
+  it.each([
+    [
+      "id vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.participants[0]).id = "";
+      },
+      "participants.0.id",
+    ],
+    [
+      "nome vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.participants[0]).name = "";
+      },
+      "participants.0.name",
+    ],
+    [
+      "dossiê vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.participants[0]).dossier = "";
+      },
+      "participants.0.dossier",
+    ],
+    [
+      "modelo vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.participants[0]).model = "";
+      },
+      "participants.0.model",
+    ],
+    [
+      "provedor vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.participants[0]).provider = "";
+      },
+      "participants.0.provider",
+    ],
+    [
+      "nome de presente vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(required(m.events[2]).gift).name = "";
+      },
+      "events.2.gift.name",
+    ],
+    [
+      "frase de presente vazia",
+      (m: ReturnType<typeof validMatch>) => {
+        required(required(m.events[2]).gift).line = "";
+      },
+      "events.2.gift.line",
+    ],
+    [
+      "dica vazia",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.events[4]).text = "";
+      },
+      "events.4.text",
+    ],
+    [
+      "agradecimento vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(m.events[9]).text = "";
+      },
+      "events.9.text",
+    ],
+    [
+      "comentário vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        Object.assign(required(m.events[5]), { quip: "" });
+      },
+      "events.5.quip",
+    ],
+    [
+      "modelo de meta vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(required(m.events[2]).meta).model = "";
+      },
+      "events.2.meta.model",
+    ],
+    [
+      "provedor de meta vazio",
+      (m: ReturnType<typeof validMatch>) => {
+        required(required(m.events[2]).meta).provider = "";
+      },
+      "events.2.meta.provider",
+    ],
+    [
+      "eventos vazios",
+      (m: ReturnType<typeof validMatch>) => {
+        m.events = [];
+      },
+      "events",
+    ],
+  ])("rejeita %s", (_name, mutate, path) => {
+    const match = validMatch();
+    mutate(match);
+    expect(() => parseMatch(match)).toThrow(`Partida inválida: ${path}:`);
   });
   it("rejeita dois participantes pelo tamanho", () => {
     const match = validMatch();
@@ -140,12 +248,12 @@ describe("schema de partida", () => {
     match.events = [
       { type: "match_started", seq: 1, at, participants: ["a", "b"], firstPresenter: "a" },
     ];
-    expect(() => parseMatch(match)).toThrow(/participants: valor inválido/);
+    expect(() => parseMatch(match)).toThrow(/Partida inválida: participants: valor inválido/);
   });
   it("rejeita treze participantes pelo tamanho", () => {
     const match = validMatch();
     match.participants.push(...Array.from({ length: 10 }, (_, i) => participant(`p${i}`)));
-    expect(() => parseMatch(match)).toThrow(/participants: valor inválido/);
+    expect(() => parseMatch(match)).toThrow(/Partida inválida: participants: valor inválido/);
   });
   it("rejeita ids duplicados", () => {
     const match = validMatch();

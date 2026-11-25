@@ -1,6 +1,6 @@
 # IAmigo Oculto — Especificação
 
-> Status: **rascunho v0.3** (POC) · Idioma do projeto: português brasileiro · Licença: MIT
+> Status: **rascunho v0.4** (POC) · Idioma do projeto: português brasileiro · Licença: MIT
 >
 > Este documento é o contrato do projeto. Mudanças de regra, de schema de eventos ou de
 > interface passam por PR neste arquivo antes de virar código. Decisões técnicas com
@@ -169,6 +169,7 @@ type Participant = {
 - `createdAt` e `at` são strings ISO-8601 UTC de um relógio injetado; `at` registra o
   momento da geração, não o da reprodução.
 - `seq` contém inteiros contíguos a partir de 1.
+- IDs de participante, nomes, textos e campos do presente não podem ser vazios; `events` tem ao menos um evento.
 
 Cada evento tem `seq`, `at` e, quando vier de um LLM, `meta`.
 

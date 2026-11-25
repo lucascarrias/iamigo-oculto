@@ -5,20 +5,20 @@ export const SCHEMA_VERSION = 1 as const;
 export const MIN_PARTICIPANTS = 3;
 export const MAX_PARTICIPANTS = 12;
 
-export const participantIdSchema = z.string();
+export const participantIdSchema = z.string().min(1);
 export const participantSchema = z.strictObject({
   id: participantIdSchema,
-  name: z.string(),
-  dossier: z.string(),
-  model: z.string(),
-  provider: z.string(),
+  name: z.string().min(1),
+  dossier: z.string().min(1),
+  model: z.string().min(1),
+  provider: z.string().min(1),
   color: z.string().optional(),
   avatar: z.string().optional(),
 });
-export const giftSchema = z.strictObject({ name: z.string(), line: z.string() });
+export const giftSchema = z.strictObject({ name: z.string().min(1), line: z.string().min(1) });
 export const eventMetaSchema = z.strictObject({
-  model: z.string(),
-  provider: z.string(),
+  model: z.string().min(1),
+  provider: z.string().min(1),
   attempts: z.number().int().min(1).max(4),
   fallback: z.boolean(),
   usage: z
@@ -63,7 +63,7 @@ export const hintGivenSchema = z.strictObject({
   type: z.literal("hint_given"),
   turn,
   round: roundSchema,
-  text: z.string(),
+  text: z.string().min(1),
   meta,
 });
 export const guessMadeSchema = z.strictObject({
@@ -73,7 +73,7 @@ export const guessMadeSchema = z.strictObject({
   round: roundSchema,
   by: participantIdSchema,
   target: participantIdSchema,
-  quip: z.string().optional(),
+  quip: z.string().min(1).optional(),
   meta,
 });
 export const roundScoredSchema = z.strictObject({
@@ -104,7 +104,7 @@ export const thanksGivenSchema = z.strictObject({
   turn,
   by: participantIdSchema,
   to: participantIdSchema,
-  text: z.string(),
+  text: z.string().min(1),
   meta,
 });
 export const matchFinishedSchema = z.strictObject({
@@ -133,7 +133,7 @@ export const matchSchema = z
     seed: z.string(),
     createdAt: z.iso.datetime(),
     participants: z.array(participantSchema).min(MIN_PARTICIPANTS).max(MAX_PARTICIPANTS),
-    events: z.array(matchEventSchema),
+    events: z.array(matchEventSchema).min(1),
   })
   .superRefine((match, ctx) => {
     const ids = new Set<string>();
